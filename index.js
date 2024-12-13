@@ -8,10 +8,24 @@ app.use(express.json());
 
 // Routes
 
-// Get all users
+
+// Get all users with pagination
 app.get('/api/users', (req, res) => {
-    return res.json(users);
+    const { page = 1, limit = 10 } = req.query;
+
+    // Calculate start and end indices
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const paginatedUsers = users.slice(startIndex, endIndex);
+    return res.json({
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: users.length,
+        users: paginatedUsers,
+    });
 });
+
 
 // Render users as HTML
 app.get('/users', (req, res) => {
